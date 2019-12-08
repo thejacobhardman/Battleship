@@ -9,12 +9,33 @@
 
 using namespace std;
 
+void printBoard(char board[5][5]) {
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 5; j++) {
+			cout << board[i][j];
+		}
+		cout << endl;
+	}
+}
+
 int main()
 {
 	string userInput;
-	bool isRunning = true,  userConfirm = false;
+	bool isRunning = true,  userConfirm = false, gameOver = false;
+	char board[5][5] = {
+		{' ', ' ', ' ', ' ', ' '},
+		{' ', ' ', ' ', ' ', ' '},
+		{' ', ' ', ' ', ' ', ' '},
+		{' ', ' ', ' ', ' ', ' '},
+		{' ', ' ', ' ', ' ', ' '},
+	};
 
 	while (isRunning) {
+
+		while (!gameOver) {
+			printBoard(board);
+		}
+
 		userConfirm = false;
 		while (!userConfirm) {
 			cout << "Would you like to play again? (Y/N): ";
