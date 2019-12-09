@@ -5,24 +5,19 @@
 
 #include <iostream>
 #include <random>
+#include <ctime>
 #include <windows.h>
 
 using namespace std;
 
 class Ship {
-	int shipXCoordinate = generateShipX(), shipYCoordinate = generateShipY();
-	bool isShipHorizontal = generateShipOrientation();
-
-public:
 	int generateShipX() {
-		int x = rand() % 4 + 0;
-
+		int x = rand() % 9 + 0;
 		return x;
 	}
 
 	int generateShipY() {
-		int y = rand() % 4 + 0;
-
+		int y = rand() % 9 + 0;
 		return y;
 	}
 
@@ -38,7 +33,23 @@ public:
 			break;
 		}
 	}
+
+public:
+	Ship(int);
+
+	int length, xCoordinate = generateShipX(), yCoordinate = generateShipY();
+	bool isShipHorizontal = generateShipOrientation();
+
+	Ship generateNewValues() {
+		Ship newShip(length);
+		return newShip;
+	}
 };
+
+Ship::Ship(int lengthInput)
+{
+	length = lengthInput;
+}
 
 // I got this method to clear the console screen in C++ from: https://stackoverflow.com/a/5866648/10190341
 void clearScreen(char fill = ' ') {
@@ -77,26 +88,111 @@ int main()
 {
 	string userInput;
 	bool isRunning = true;
-	//int shipXCoordinate, shipYCoordinate;
-	//bool isShipHorizontal;
+
+	srand(time(NULL));
 
 	while (isRunning) {
 
-		bool userConfirm = false, gameOver = false;
+		bool userConfirm = false, gameOver = false, validShipPos = false;
 		char board[10][10] = {
-			{' ', ' ', ' ', ' ', ' '},
-			{' ', ' ', ' ', ' ', ' '},
-			{' ', ' ', ' ', ' ', ' '},
-			{' ', ' ', ' ', ' ', ' '},
-			{' ', ' ', ' ', ' ', ' '},
+			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
 		};
 
-		//shipXCoordinate = generateShipX();
-		//shipYCoordinate = generateShipY();
-
-		Ship ship();
-
-		//board[ship]
+#pragma region GenerateBattleship
+		Ship battleship(5);
+		while (!validShipPos) {
+			bool verificationPassed = true;
+			if (battleship.isShipHorizontal) {
+				if (battleship.xCoordinate <= battleship.length) {
+					for (int i = 0; i < battleship.length; i++) {
+						if (board[battleship.yCoordinate][battleship.xCoordinate + i] != ' ') {
+							battleship = battleship.generateNewValues();
+							verificationPassed = false;
+							break;
+						}
+						else {
+							continue;
+						}
+					}
+					if (verificationPassed == true) {
+						validShipPos = true;
+						for (int i = 0; i < battleship.length; i++) {
+							board[battleship.yCoordinate][battleship.xCoordinate + i] = 'S';
+						}
+					}
+				}
+				else {
+					for (int i = 0; i < battleship.length; i++) {
+						for (int i = 0; i < battleship.length; i++) {
+							if (board[battleship.yCoordinate][battleship.xCoordinate - i] != ' ') {
+								battleship = battleship.generateNewValues();
+								verificationPassed = false;
+								break;
+							}
+							else {
+								continue;
+							}
+						}
+						if (verificationPassed == true) {
+							validShipPos = true;
+							for (int i = 0; i < battleship.length; i++) {
+								board[battleship.yCoordinate][battleship.xCoordinate + i] = 'S';
+							}
+						}
+					}
+				}
+			}
+			else {
+				if (battleship.yCoordinate <= battleship.length) {
+					for (int i = 0; i < battleship.length; i++) {
+						if (board[battleship.yCoordinate + i][battleship.xCoordinate] != ' ') {
+							battleship = battleship.generateNewValues();
+							verificationPassed = false;
+							break;
+						}
+						else {
+							continue;
+						}
+					}
+					if (verificationPassed == true) {
+						validShipPos = true;
+						for (int i = 0; i < battleship.length; i++) {
+							board[battleship.yCoordinate][battleship.xCoordinate + i] = 'S';
+						}
+					}
+				}
+				else {
+					for (int i = 0; i < battleship.length; i++) {
+						for (int i = 0; i < battleship.length; i++) {
+							if (board[battleship.yCoordinate - i][battleship.xCoordinate] != ' ') {
+								battleship = battleship.generateNewValues();
+								verificationPassed = false;
+								break;
+							}
+							else {
+								continue;
+							}
+						}
+						if (verificationPassed == true) {
+							validShipPos = true;
+							for (int i = 0; i < battleship.length; i++) {
+								board[battleship.yCoordinate][battleship.xCoordinate + i] = 'S';
+							}
+						}
+					}
+				}
+			}
+		}
+#pragma endregion
 
 		while (!gameOver) {
 			clearScreen();
