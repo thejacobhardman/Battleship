@@ -53,6 +53,9 @@ public:
 	int length, 
 		xCoordinate = generateShipX(), 
 		yCoordinate = generateShipY();
+
+	string status = getShipStatus();
+
 	bool isShipHorizontal = generateShipOrientation();
 
 	Ship generateNewValues() {
@@ -126,58 +129,22 @@ public:
 			}
 		}
 	}
+
+	string getShipStatus() {
+		bool isShipDestroyed = false;
+
+		if (isShipDestroyed) {
+			return "Destroyed";
+		}
+		else {
+			return "Active";
+		}
+	}
 };
 
 Ship::Ship(int lengthInput)
 {
 	length = lengthInput;
-}
-
-void generateShips() {
-	Ship aircraftCarrier(7);
-	bool validShipPos = false;
-	while (!validShipPos) {
-		validShipPos = aircraftCarrier.placeShip();
-		if (!validShipPos) {
-			aircraftCarrier = aircraftCarrier.generateNewValues();
-		}
-	}
-
-	Ship battleship(5);
-	validShipPos = false;
-	while (!validShipPos) {
-		validShipPos = battleship.placeShip();
-		if (!validShipPos) {
-			battleship = battleship.generateNewValues();
-		}
-	}
-
-	Ship destroyer(3);
-	validShipPos = false;
-	while (!validShipPos) {
-		validShipPos = destroyer.placeShip();
-		if (!validShipPos) {
-			destroyer = destroyer.generateNewValues();
-		}
-	}
-
-	Ship submarine(2);
-	validShipPos = false;
-	while (!validShipPos) {
-		validShipPos = submarine.placeShip();
-		if (!validShipPos) {
-			submarine = submarine.generateNewValues();
-		}
-	}
-	
-	Ship scout(1);
-	validShipPos = false;
-	while (!validShipPos) {
-		validShipPos = scout.placeShip();
-		if (!validShipPos) {
-			scout = scout.generateNewValues();
-		}
-	}
 }
 
 // I got this method to clear the console screen in C++ from: https://stackoverflow.com/a/5866648/10190341
@@ -192,7 +159,7 @@ void clearScreen(char fill = ' ') {
 	SetConsoleCursorPosition(console, tl);
 }
 
-void printBoard(char board[10][10]) {
+void printBoard(char board[10][10], Ship aircraftCarrier, Ship battleship, Ship destroyer, Ship submarine, Ship scout) {
 	char letterArr[10] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
 
 	cout << "-----------------------------------------" << endl;
@@ -206,7 +173,25 @@ void printBoard(char board[10][10]) {
 			}
 		}
 		cout << letterArr[i];
-		if (i != 9) {
+		if (i == 1) {
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "				Ship Statuses:" << endl;
+		}
+		else if (i == 2) {
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "			  Aircraft Carrier: " << aircraftCarrier.status <<endl;
+		}
+		else if (i == 3) {
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "		  	     Battleship: " << battleship.status << endl;
+		}
+		else if (i == 4) {
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "			      Destroyer: " << destroyer.status << endl;
+		}
+		else if (i == 5) {
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "			      Submarine: " << submarine.status << endl;
+		}
+		else if (i == 6) {
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "			     Scout Ship: " << scout.status << endl;
+		}
+		else if (i != 9) {
 			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << endl;
 		}
 	}
@@ -222,6 +207,8 @@ int main()
 
 	while (isRunning) {
 
+		int playerHealth = 100, turnsLeft = 30;
+
 		bool userConfirm = false, gameOver = false;
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 10; j++) {
@@ -229,14 +216,62 @@ int main()
 			}
 		}
 
-		generateShips();
+#pragma region Generate Ships
+		Ship aircraftCarrier(7);
+		bool validShipPos = false;
+		while (!validShipPos) {
+			validShipPos = aircraftCarrier.placeShip();
+			if (!validShipPos) {
+				aircraftCarrier = aircraftCarrier.generateNewValues();
+			}
+		}
+
+		Ship battleship(5);
+		validShipPos = false;
+		while (!validShipPos) {
+			validShipPos = battleship.placeShip();
+			if (!validShipPos) {
+				battleship = battleship.generateNewValues();
+			}
+		}
+
+		Ship destroyer(3);
+		validShipPos = false;
+		while (!validShipPos) {
+			validShipPos = destroyer.placeShip();
+			if (!validShipPos) {
+				destroyer = destroyer.generateNewValues();
+			}
+		}
+
+		Ship submarine(2);
+		validShipPos = false;
+		while (!validShipPos) {
+			validShipPos = submarine.placeShip();
+			if (!validShipPos) {
+				submarine = submarine.generateNewValues();
+			}
+		}
+
+		Ship scout(1);
+		validShipPos = false;
+		while (!validShipPos) {
+			validShipPos = scout.placeShip();
+			if (!validShipPos) {
+				scout = scout.generateNewValues();
+			}
+		}
+#pragma endregion
+
 
 		while (!gameOver) {
 			clearScreen();
 
-			printBoard(board);
+			printBoard(board, aircraftCarrier, battleship, destroyer, submarine, scout);
 
-			cout << "Press any button to continue." << endl;
+			cout << endl << "    Health: " << playerHealth << "    Turns Remaining: " << turnsLeft << endl;
+
+			cout << "\nPress any button to continue." << endl;
 			cin >> userInput;
 		}
 
