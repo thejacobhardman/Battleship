@@ -207,9 +207,12 @@ int main()
 
 	while (isRunning) {
 
-		int playerHealth = 100, turnsLeft = 30;
+		cout << "Welcome to Battleship!" << endl;
+
+		int playerHealth = 100, turnsLeft = 50, difficulty;
 
 		bool userConfirm = false, gameOver = false;
+
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 10; j++) {
 				board[i][j] = ' ';
@@ -263,6 +266,32 @@ int main()
 		}
 #pragma endregion
 
+		userConfirm = false;
+		while (!userConfirm) {
+			cout << "Please select a difficulty: " << endl;
+			cout << "(1) Easy: A walk in the park." << endl;
+			cout << "(2) Medium: A decent challenge." << endl;
+			cout << "(3) Hard: Nearly impossible." << endl;
+			cout << "Enter the corresponding number to select your difficulty: ";
+			cin >> difficulty;
+
+			switch (difficulty) {
+			case 1:
+				playerHealth = 200;
+				turnsLeft = 100;
+				break;
+			case 2:
+				playerHealth = 100;
+				turnsLeft = 50;
+				break;
+			case 3:
+				playerHealth = 50;
+				turnsLeft = 25;
+				break;
+			}
+
+			userConfirm = true;
+		}
 
 		while (!gameOver) {
 			clearScreen();
