@@ -10,6 +10,19 @@
 
 using namespace std;
 
+char board[10][10] = {
+	{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+	{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+	{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+	{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+	{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+	{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+	{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+	{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+	{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+	{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+};
+
 class Ship {
 	int generateShipX() {
 		int x = rand() % 9 + 0;
@@ -37,18 +50,134 @@ class Ship {
 public:
 	Ship(int);
 
-	int length, xCoordinate = generateShipX(), yCoordinate = generateShipY();
+	int length, 
+		xCoordinate = generateShipX(), 
+		yCoordinate = generateShipY();
 	bool isShipHorizontal = generateShipOrientation();
 
 	Ship generateNewValues() {
 		Ship newShip(length);
 		return newShip;
 	}
+
+	bool placeShip() {
+		bool validShipPos = false;
+		while (!validShipPos) {
+			bool verificationPassed = true;
+			if (isShipHorizontal) {
+				if (xCoordinate <= length) {
+					for (int i = 0; i < length; i++) {
+						if (board[yCoordinate][xCoordinate + i] != ' ') {
+							return false;
+						}
+					}
+					if (verificationPassed == true) {
+						for (int i = 0; i < length; i++) {
+							board[yCoordinate][xCoordinate + i] = 'S';
+						}
+						return true;
+					}
+				}
+				else {
+					for (int i = 0; i < length; i++) {
+						for (int i = 0; i < length; i++) {
+							if (board[yCoordinate][xCoordinate - i] != ' ') {
+								return false;
+							}
+						}
+						if (verificationPassed == true) {
+							for (int i = 0; i < length; i++) {
+								board[yCoordinate][xCoordinate - i] = 'S';
+							}
+							return true;
+						}
+					}
+				}
+			}
+			else {
+				if (yCoordinate <= length) {
+					for (int i = 0; i < length; i++) {
+						if (board[yCoordinate + i][xCoordinate] != ' ') {
+							return false;
+						}
+					}
+					if (verificationPassed == true) {
+						for (int i = 0; i < length; i++) {
+							board[yCoordinate + i][xCoordinate] = 'S';
+						}
+						return true;
+					}
+				}
+				else {
+					for (int i = 0; i < length; i++) {
+						for (int i = 0; i < length; i++) {
+							if (board[yCoordinate - i][xCoordinate] != ' ') {
+								return false;
+							}
+						}
+						if (verificationPassed == true) {
+							for (int i = 0; i < length; i++) {
+								board[yCoordinate - i][xCoordinate] = 'S';
+							}
+							return true;
+						}
+					}
+				}
+			}
+		}
+	}
 };
 
 Ship::Ship(int lengthInput)
 {
 	length = lengthInput;
+}
+
+void generateShips() {
+	Ship aircraftCarrier(7);
+	bool validShipPos = false;
+	while (!validShipPos) {
+		validShipPos = aircraftCarrier.placeShip();
+		if (!validShipPos) {
+			aircraftCarrier = aircraftCarrier.generateNewValues();
+		}
+	}
+
+	Ship battleship(5);
+	validShipPos = false;
+	while (!validShipPos) {
+		validShipPos = battleship.placeShip();
+		if (!validShipPos) {
+			battleship = battleship.generateNewValues();
+		}
+	}
+
+	Ship destroyer(3);
+	validShipPos = false;
+	while (!validShipPos) {
+		validShipPos = destroyer.placeShip();
+		if (!validShipPos) {
+			destroyer = destroyer.generateNewValues();
+		}
+	}
+
+	Ship submarine(2);
+	validShipPos = false;
+	while (!validShipPos) {
+		validShipPos = submarine.placeShip();
+		if (!validShipPos) {
+			submarine = submarine.generateNewValues();
+		}
+	}
+	
+	Ship scout(1);
+	validShipPos = false;
+	while (!validShipPos) {
+		validShipPos = scout.placeShip();
+		if (!validShipPos) {
+			scout = scout.generateNewValues();
+		}
+	}
 }
 
 // I got this method to clear the console screen in C++ from: https://stackoverflow.com/a/5866648/10190341
@@ -93,106 +222,14 @@ int main()
 
 	while (isRunning) {
 
-		bool userConfirm = false, gameOver = false, validShipPos = false;
-		char board[10][10] = {
-			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-			{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-		};
-
-#pragma region GenerateBattleship
-		Ship battleship(5);
-		while (!validShipPos) {
-			bool verificationPassed = true;
-			if (battleship.isShipHorizontal) {
-				if (battleship.xCoordinate <= battleship.length) {
-					for (int i = 0; i < battleship.length; i++) {
-						if (board[battleship.yCoordinate][battleship.xCoordinate + i] != ' ') {
-							battleship = battleship.generateNewValues();
-							verificationPassed = false;
-							break;
-						}
-						else {
-							continue;
-						}
-					}
-					if (verificationPassed == true) {
-						validShipPos = true;
-						for (int i = 0; i < battleship.length; i++) {
-							board[battleship.yCoordinate][battleship.xCoordinate + i] = 'S';
-						}
-					}
-				}
-				else {
-					for (int i = 0; i < battleship.length; i++) {
-						for (int i = 0; i < battleship.length; i++) {
-							if (board[battleship.yCoordinate][battleship.xCoordinate - i] != ' ') {
-								battleship = battleship.generateNewValues();
-								verificationPassed = false;
-								break;
-							}
-							else {
-								continue;
-							}
-						}
-						if (verificationPassed == true) {
-							validShipPos = true;
-							for (int i = 0; i < battleship.length; i++) {
-								board[battleship.yCoordinate][battleship.xCoordinate + i] = 'S';
-							}
-						}
-					}
-				}
-			}
-			else {
-				if (battleship.yCoordinate <= battleship.length) {
-					for (int i = 0; i < battleship.length; i++) {
-						if (board[battleship.yCoordinate + i][battleship.xCoordinate] != ' ') {
-							battleship = battleship.generateNewValues();
-							verificationPassed = false;
-							break;
-						}
-						else {
-							continue;
-						}
-					}
-					if (verificationPassed == true) {
-						validShipPos = true;
-						for (int i = 0; i < battleship.length; i++) {
-							board[battleship.yCoordinate][battleship.xCoordinate + i] = 'S';
-						}
-					}
-				}
-				else {
-					for (int i = 0; i < battleship.length; i++) {
-						for (int i = 0; i < battleship.length; i++) {
-							if (board[battleship.yCoordinate - i][battleship.xCoordinate] != ' ') {
-								battleship = battleship.generateNewValues();
-								verificationPassed = false;
-								break;
-							}
-							else {
-								continue;
-							}
-						}
-						if (verificationPassed == true) {
-							validShipPos = true;
-							for (int i = 0; i < battleship.length; i++) {
-								board[battleship.yCoordinate][battleship.xCoordinate + i] = 'S';
-							}
-						}
-					}
-				}
+		bool userConfirm = false, gameOver = false;
+		for (int i = 0; i < 10; i++) {
+			for (int j = 0; j < 10; j++) {
+				board[i][j] = ' ';
 			}
 		}
-#pragma endregion
+
+		generateShips();
 
 		while (!gameOver) {
 			clearScreen();
