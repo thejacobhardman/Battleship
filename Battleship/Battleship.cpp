@@ -174,22 +174,22 @@ void printBoard(char board[10][10], Ship aircraftCarrier, Ship battleship, Ship 
 		}
 		cout << letterArr[i];
 		if (i == 1) {
-			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "				Ship Statuses:" << endl;
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "		Ship Statuses:" << endl;
 		}
 		else if (i == 2) {
-			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "			  Aircraft Carrier: " << aircraftCarrier.status <<endl;
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "	   Aircraft Carrier: " << aircraftCarrier.status << endl;
 		}
 		else if (i == 3) {
-			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "		  	     Battleship: " << battleship.status << endl;
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "	     Battleship: " << battleship.status << endl;
 		}
 		else if (i == 4) {
-			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "			      Destroyer: " << destroyer.status << endl;
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << " 	      Destroyer: " << destroyer.status << endl;
 		}
 		else if (i == 5) {
-			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "			      Submarine: " << submarine.status << endl;
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "	      Submarine: " << submarine.status << endl;
 		}
 		else if (i == 6) {
-			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "			     Scout Ship: " << scout.status << endl;
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "             Scout Ship: " << scout.status << endl;
 		}
 		else if (i != 9) {
 			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << endl;
