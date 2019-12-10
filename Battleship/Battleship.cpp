@@ -228,7 +228,7 @@ string getPlayerGuess() {
 
 		if (sizeof(container) == 2) {
 			validInput = true;
-			cout << container[0] << container[1] << endl;
+			cout << container[0] << container[1] << endl;	
 		}
 		else {
 			cout << "Please enter a valid cell." << endl;
