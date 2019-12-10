@@ -7,6 +7,7 @@
 #include <random>
 #include <ctime>
 #include <windows.h>
+#include <string>
 
 using namespace std;
 
@@ -273,24 +274,35 @@ int main()
 			cout << "(2) Medium: A decent challenge." << endl;
 			cout << "(3) Hard: Nearly impossible." << endl;
 			cout << "Enter the corresponding number to select your difficulty: ";
-			cin >> difficulty;
-
-			switch (difficulty) {
-			case 1:
-				playerHealth = 200;
-				turnsLeft = 100;
-				break;
-			case 2:
-				playerHealth = 100;
-				turnsLeft = 50;
-				break;
-			case 3:
-				playerHealth = 50;
-				turnsLeft = 25;
-				break;
-			}
-
+			cin >> userInput;
 			userConfirm = true;
+
+			try {
+				difficulty = stoi(userInput);
+				if (difficulty < 1 || difficulty > 3) {
+					cout << "\nPlease enter a valid integer." << endl;;
+					userConfirm = false;
+				}
+			}
+			catch (exception) {
+				cout << "\nPlease enter a valid integer." << endl;;
+				userConfirm = false;
+			}
+		}
+
+		switch (difficulty) {
+		case 1:
+			playerHealth = 200;
+			turnsLeft = 100;
+			break;
+		case 2:
+			playerHealth = 100;
+			turnsLeft = 50;
+			break;
+		case 3:
+			playerHealth = 50;
+			turnsLeft = 25;
+			break;
 		}
 
 		while (!gameOver) {
