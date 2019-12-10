@@ -207,7 +207,7 @@ int main()
 
 	while (isRunning) {
 
-		cout << "Welcome to Battleship!" << endl;
+		cout << "Welcome to Battleship!\nPlease ensure that your console window is large enough to see the entire game." << endl;
 
 		int playerHealth = 100, turnsLeft = 50, difficulty;
 
@@ -268,7 +268,7 @@ int main()
 
 		userConfirm = false;
 		while (!userConfirm) {
-			cout << "Please select a difficulty: " << endl;
+			cout << "\nPlease select a difficulty: " << endl;
 			cout << "(1) Easy: A walk in the park." << endl;
 			cout << "(2) Medium: A decent challenge." << endl;
 			cout << "(3) Hard: Nearly impossible." << endl;
