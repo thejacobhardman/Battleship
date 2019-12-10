@@ -8,6 +8,8 @@
 #include <ctime>
 #include <windows.h>
 #include <string>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -55,6 +57,8 @@ public:
 		xCoordinate = generateShipX(), 
 		yCoordinate = generateShipY();
 
+	vector<string> spaces;
+
 	string status = getShipStatus();
 
 	bool isShipHorizontal = generateShipOrientation();
@@ -78,6 +82,8 @@ public:
 					if (verificationPassed == true) {
 						for (int i = 0; i < length; i++) {
 							board[yCoordinate][xCoordinate + i] = 'S';
+							string space = to_string(yCoordinate) + to_string(xCoordinate + i);
+							spaces.push_back(space);
 						}
 						return true;
 					}
@@ -92,6 +98,8 @@ public:
 						if (verificationPassed == true) {
 							for (int i = 0; i < length; i++) {
 								board[yCoordinate][xCoordinate - i] = 'S';
+								string space = to_string(yCoordinate) + to_string(xCoordinate - i);
+								spaces.push_back(space);
 							}
 							return true;
 						}
@@ -108,6 +116,8 @@ public:
 					if (verificationPassed == true) {
 						for (int i = 0; i < length; i++) {
 							board[yCoordinate + i][xCoordinate] = 'S';
+							string space = to_string(yCoordinate + i) + to_string(xCoordinate);
+							spaces.push_back(space);
 						}
 						return true;
 					}
@@ -122,6 +132,8 @@ public:
 						if (verificationPassed == true) {
 							for (int i = 0; i < length; i++) {
 								board[yCoordinate - i][xCoordinate] = 'S';
+								string space = to_string(yCoordinate - i) + to_string(xCoordinate);
+								spaces.push_back(space);
 							}
 							return true;
 						}
@@ -199,10 +211,68 @@ void printBoard(char board[10][10], Ship aircraftCarrier, Ship battleship, Ship 
 	cout << endl << "-----------------------------------------" << endl << "  1   2   3   4   5   6   7   8   9  10" << endl;
 }
 
+string getPlayerGuess() {
+	bool validInput = false;
+	vector<char> container;
+	const char COLUMNS[10] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
+	string userInput, playerGuess;
+
+	while (!validInput) {
+		container.clear();
+		cout << "\nEnter the cell that you'd like to fire at: ";
+		cin >> userInput;
+
+		for (char& character : userInput) {
+			container.push_back(character);
+		}
+
+		if (sizeof(container) == 2) {
+			validInput = true;
+			cout << container[0] << container[1] << endl;
+		}
+		else {
+			cout << "Please enter a valid cell." << endl;
+		}
+
+		if (validInput) {
+			for (int i = 0; i < 10; i++) {
+				if (container[0] == COLUMNS[i]) {
+					validInput = true;
+					break;
+				}
+			}
+		}
+
+		if (validInput) {
+			try {
+				int testNum = container[1];
+			}
+			catch (exception) {
+				cout << "Please enter a valid cell." << endl;
+				validInput = false;
+			}
+		}
+
+		if (validInput) {
+			int testNum = container[1];
+			if (testNum < 1 || testNum > 10) {
+				cout << "Please enter a valid cell." << endl;
+				validInput = false;
+			}
+		}
+	}
+
+	playerGuess.append(to_string(container[0]));
+	playerGuess.append(to_string(container[1]));
+
+	return playerGuess;
+}
+
 int main()
 {
 	string userInput;
 	bool isRunning = true;
+	vector<Ship> ships;
 
 	srand(time(NULL));
 
@@ -212,7 +282,7 @@ int main()
 
 		int playerHealth = 100, turnsLeft = 50, difficulty;
 
-		bool userConfirm = false, gameOver = false;
+		bool userConfirm = false, gameOver = false, validInput = false;
 
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 10; j++) {
@@ -229,6 +299,7 @@ int main()
 				aircraftCarrier = aircraftCarrier.generateNewValues();
 			}
 		}
+		ships.push_back(aircraftCarrier);
 
 		Ship battleship(5);
 		validShipPos = false;
@@ -238,6 +309,7 @@ int main()
 				battleship = battleship.generateNewValues();
 			}
 		}
+		ships.push_back(battleship);
 
 		Ship destroyer(3);
 		validShipPos = false;
@@ -247,6 +319,7 @@ int main()
 				destroyer = destroyer.generateNewValues();
 			}
 		}
+		ships.push_back(destroyer);
 
 		Ship submarine(2);
 		validShipPos = false;
@@ -256,6 +329,7 @@ int main()
 				submarine = submarine.generateNewValues();
 			}
 		}
+		ships.push_back(submarine);
 
 		Ship scout(1);
 		validShipPos = false;
@@ -265,28 +339,29 @@ int main()
 				scout = scout.generateNewValues();
 			}
 		}
+		ships.push_back(scout);
 #pragma endregion
 
-		userConfirm = false;
-		while (!userConfirm) {
+		validInput = false;
+		while (!validInput) {
 			cout << "\nPlease select a difficulty: " << endl;
 			cout << "(1) Easy: A walk in the park." << endl;
 			cout << "(2) Medium: A decent challenge." << endl;
 			cout << "(3) Hard: Nearly impossible." << endl;
 			cout << "Enter the corresponding number to select your difficulty: ";
 			cin >> userInput;
-			userConfirm = true;
+			validInput = true;
 
 			try {
 				difficulty = stoi(userInput);
 				if (difficulty < 1 || difficulty > 3) {
 					cout << "\nPlease enter a valid integer." << endl;;
-					userConfirm = false;
+					validInput = false;
 				}
 			}
 			catch (exception) {
 				cout << "\nPlease enter a valid integer." << endl;;
-				userConfirm = false;
+				validInput = false;
 			}
 		}
 
@@ -306,13 +381,23 @@ int main()
 		}
 
 		while (!gameOver) {
+			string playerGuess;
+
+			for (auto ship = ships.begin(); ship != ships.end(); ++ship) {
+				if (ship->status == "Destroyed") {
+					ships.erase(ship);
+				}
+			}
+
 			clearScreen();
 
 			printBoard(board, aircraftCarrier, battleship, destroyer, submarine, scout);
 
 			cout << endl << "    Health: " << playerHealth << "    Turns Remaining: " << turnsLeft << endl;
 
-			cout << "\nPress any button to continue." << endl;
+			playerGuess = getPlayerGuess();
+
+			cout << playerGuess << endl << "Press any button to continue.";
 			cin >> userInput;
 		}
 
