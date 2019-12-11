@@ -212,7 +212,7 @@ void printBoard(char board[10][10], Ship aircraftCarrier, Ship battleship, Ship 
 }
 
 string getPlayerGuess() {
-	bool validInput = false, validSize = false;
+	bool validInput = false, validSize = false, guessedTen = false;
 	vector<char> container;
 	const char COLUMNS[10] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
 	string userInput, playerGuess;
@@ -228,9 +228,18 @@ string getPlayerGuess() {
 			container.push_back(character);
 		}
 
-		// Check to make sure that the user entered 2 characters
+		// Check to make sure that the user entered 2 characters with a special clause for 3 if the user entered 10
 		if (container.size() == 2) {
 			validSize = true;
+		}
+		else if (container.size() == 3) {
+			if (container[1] == '1' && container[2] == '0' && container.size() == 3) {
+				validSize = true;
+				guessedTen = true;
+			}
+			else {
+				cout << "Please enter a valid cell." << endl;
+			}
 		}
 		else {
 			cout << "Please enter a valid cell." << endl;
@@ -301,12 +310,17 @@ string getPlayerGuess() {
 		container[0] = '9';
 		break;
 	case 'J':
-		container[0] = '10';
+		container[0] = '0';
 		break;
 	}
 
 	playerGuess += container[0];
 	playerGuess += container[1];
+	if (guessedTen) {
+		playerGuess += container[2];
+	}
+
+	cout << playerGuess << endl;
 
 	return playerGuess;
 }
@@ -320,12 +334,13 @@ int main()
 	srand(time(NULL));
 
 	while (isRunning) {
+		clearScreen();
 
 		cout << "Welcome to Battleship!\nPlease ensure that your console window is large enough to see the entire game." << endl;
 
-		int playerHealth = 100, turnsLeft = 50, difficulty;
+		int playerScore = 0, turnsLeft = 50, difficulty;
 
-		bool userConfirm = false, gameOver = false, validInput = false;
+		bool userConfirm = false, gameOver = false, validInput = false, gameWon = false;
 
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 10; j++) {
@@ -410,15 +425,12 @@ int main()
 
 		switch (difficulty) {
 		case 1:
-			playerHealth = 200;
 			turnsLeft = 100;
 			break;
 		case 2:
-			playerHealth = 100;
 			turnsLeft = 50;
 			break;
 		case 3:
-			playerHealth = 50;
 			turnsLeft = 25;
 			break;
 		}
@@ -437,23 +449,32 @@ int main()
 
 			printBoard(board, aircraftCarrier, battleship, destroyer, submarine, scout);
 
-			cout << endl << "    Health: " << playerHealth << "    Turns Remaining: " << turnsLeft << endl;
+			cout << endl << "    Score: " << playerScore << "    Turns Remaining: " << turnsLeft << endl;
 
 			playerGuess = getPlayerGuess();
-
-			cout << "Player Guess: " << playerGuess << endl;
 
 			for (int i = 0; i < playerGuess.size(); i++) {
 				int num = int(playerGuess[i] - '0');
 				playerCoordinates.push_back(num);
 			}
 
+			if (playerCoordinates[0] == 0) {
+				playerCoordinates[0] = 10;
+			}
+
+			if (playerCoordinates.size() == 3) {
+				playerCoordinates[1] = 10;
+			} 
+
 			board[playerCoordinates[0] - 1][playerCoordinates[1] - 1] = 'X';
 
 			turnsLeft -= 1;
 
-			cout << "Press any button to continue.";
-			cin >> userInput;
+			if (turnsLeft == 0) {
+				gameOver = true;
+				clearScreen();
+				cout << "Game Over!" << endl;
+			}
 		}
 
 		userConfirm = false;
@@ -462,6 +483,7 @@ int main()
 			cin >> userInput;
 
 			if (userInput == "Y" || userInput == "y") {
+				gameOver = false;
 				userConfirm = true;
 			}
 			else if (userInput == "N" || userInput == "n") {
