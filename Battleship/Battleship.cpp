@@ -449,7 +449,7 @@ int main()
 
 			printBoard(board, aircraftCarrier, battleship, destroyer, submarine, scout);
 
-			cout << endl << "    Score: " << playerScore << "    Turns Remaining: " << turnsLeft << endl;
+			cout << endl << "     Score: " << playerScore << "    Turns Remaining: " << turnsLeft << endl;
 
 			playerGuess = getPlayerGuess();
 
