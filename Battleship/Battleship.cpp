@@ -212,40 +212,48 @@ void printBoard(char board[10][10], Ship aircraftCarrier, Ship battleship, Ship 
 }
 
 string getPlayerGuess() {
-	bool validInput = false;
+	bool validInput = false, validSize = false;
 	vector<char> container;
 	const char COLUMNS[10] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
 	string userInput, playerGuess;
 
 	while (!validInput) {
+		// Clear the container and get the user's input
 		container.clear();
 		cout << "\nEnter the cell that you'd like to fire at: ";
 		cin >> userInput;
 
+		// Add the user's input to the container
 		for (char& character : userInput) {
 			container.push_back(character);
 		}
 
-		if (sizeof(container) == 2) {
-			validInput = true;
-			cout << container[0] << container[1] << endl;	
+		// Check to make sure that the user entered 2 characters
+		if (container.size() == 2) {
+			validSize = true;
 		}
 		else {
 			cout << "Please enter a valid cell." << endl;
 		}
 
-		if (validInput) {
+		// Check that the first character that the user entered is a valid letter
+		if (validSize) {
 			for (int i = 0; i < 10; i++) {
 				if (container[0] == COLUMNS[i]) {
 					validInput = true;
 					break;
 				}
 			}
+
+			if (!validInput) {
+				cout << "Please enter a valid cell." << endl;
+			}
 		}
 
+		// Check that the second character that the user entered is an integer
 		if (validInput) {
 			try {
-				int testNum = container[1];
+				int testNum = container[1] - '0';
 			}
 			catch (exception) {
 				cout << "Please enter a valid cell." << endl;
@@ -253,8 +261,9 @@ string getPlayerGuess() {
 			}
 		}
 
+		// Check that the int that the user entered is between 1 and 10
 		if (validInput) {
-			int testNum = container[1];
+			int testNum = container[1] - '0';
 			if (testNum < 1 || testNum > 10) {
 				cout << "Please enter a valid cell." << endl;
 				validInput = false;
@@ -262,8 +271,42 @@ string getPlayerGuess() {
 		}
 	}
 
-	playerGuess.append(to_string(container[0]));
-	playerGuess.append(to_string(container[1]));
+	// Convert the user's input to coordinates
+	switch (container[0]) {
+	case 'A':
+		container[0] = '1';
+		break;
+	case 'B':
+		container[0] = '2';
+		break;
+	case 'C':
+		container[0] = '3';
+		break;
+	case 'D':
+		container[0] = '4';
+		break;
+	case 'E':
+		container[0] = '5';
+		break;
+	case 'F':
+		container[0] = '6';
+		break;
+	case 'G':
+		container[0] = '7';
+		break;
+	case 'H':
+		container[0] = '8';
+		break;
+	case 'I':
+		container[0] = '9';
+		break;
+	case 'J':
+		container[0] = '10';
+		break;
+	}
+
+	playerGuess += container[0];
+	playerGuess += container[1];
 
 	return playerGuess;
 }
@@ -382,6 +425,7 @@ int main()
 
 		while (!gameOver) {
 			string playerGuess;
+			vector<int> playerCoordinates;
 
 			for (auto ship = ships.begin(); ship != ships.end(); ++ship) {
 				if (ship->status == "Destroyed") {
@@ -397,7 +441,18 @@ int main()
 
 			playerGuess = getPlayerGuess();
 
-			cout << playerGuess << endl << "Press any button to continue.";
+			cout << "Player Guess: " << playerGuess << endl;
+
+			for (int i = 0; i < playerGuess.size(); i++) {
+				int num = int(playerGuess[i] - '0');
+				playerCoordinates.push_back(num);
+			}
+
+			board[playerCoordinates[0] - 1][playerCoordinates[1] - 1] = 'X';
+
+			turnsLeft -= 1;
+
+			cout << "Press any button to continue.";
 			cin >> userInput;
 		}
 
