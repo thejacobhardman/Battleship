@@ -59,8 +59,6 @@ public:
 
 	vector<string> spaces;
 
-	string status = getShipStatus();
-
 	bool isShipHorizontal = generateShipOrientation();
 
 	//debug method
@@ -74,15 +72,25 @@ public:
 	bool checkIfHit(vector<int> playerCoordinates) {
 		bool isShipHit = false;
 		string userInput;
+		int erasedIndex = 0;
 
 		string playerGuess = to_string(playerCoordinates[0] - 1) + to_string(playerCoordinates[1] - 1);
 		
-		for (int i = 0; i < spaces.size(); i++) {
+		for (int i = 0; i < spaces.size(); ++i) {
 			if (playerGuess == spaces[i]) {
 				isShipHit = true;
+				erasedIndex = i;
 				break;
 			}
 		}
+
+		if (isShipHit) {
+			spaces[erasedIndex].erase();
+		}
+
+		printSpaces();
+		cout << "spaces.size(): " << spaces.size() << endl;
+		cin >> userInput;
 
 		return isShipHit;
 	}
@@ -106,7 +114,7 @@ public:
 					if (verificationPassed == true) {
 						for (int i = 0; i < length; i++) {
 							board[yCoordinate][xCoordinate + i] = 'S';
-							string space = to_string(yCoordinate) + to_string(xCoordinate + i);
+							string space = to_string(yCoordinate) + to_string((xCoordinate + i));
 							spaces.push_back(space);
 						}
 						return true;
@@ -121,7 +129,7 @@ public:
 					if (verificationPassed == true) {
 						for (int i = 0; i < length; i++) {
 							board[yCoordinate][xCoordinate - i] = 'S';
-							string space = to_string(yCoordinate) + to_string(xCoordinate + i);
+							string space = to_string(yCoordinate) + to_string((xCoordinate - i));
 							spaces.push_back(space);
 						}
 						return true;
@@ -138,7 +146,7 @@ public:
 					if (verificationPassed == true) {
 						for (int i = 0; i < length; i++) {
 							board[yCoordinate + i][xCoordinate] = 'S';
-							string space = to_string(yCoordinate + i) + to_string(xCoordinate);
+							string space = to_string((yCoordinate + i)) + to_string(xCoordinate);
 							spaces.push_back(space);
 						}
 						return true;
@@ -153,7 +161,7 @@ public:
 					if (verificationPassed == true) {
 						for (int i = 0; i < length; i++) {
 							board[yCoordinate - i][xCoordinate] = 'S';
-							string space = to_string(yCoordinate + i) + to_string(xCoordinate);
+							string space = to_string((yCoordinate - i)) + to_string(xCoordinate);
 							spaces.push_back(space);
 						}
 						return true;
@@ -164,7 +172,14 @@ public:
 	}
 
 	string getShipStatus() {
-		bool isShipDestroyed = false;
+		bool isShipDestroyed = true;
+
+		for (int i = 0; i < spaces.size(); i++) {
+			if (spaces[i] != "") {
+				isShipDestroyed = false;
+				break;
+			}
+		}
 
 		if (isShipDestroyed) {
 			return "Destroyed";
@@ -210,19 +225,19 @@ void printBoard(char board[10][10], Ship aircraftCarrier, Ship battleship, Ship 
 			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "		Ship Statuses:" << endl;
 		}
 		else if (i == 2) {
-			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "	   Aircraft Carrier: " << aircraftCarrier.status << endl;
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "	   Aircraft Carrier: " << aircraftCarrier.getShipStatus() << endl;
 		}
 		else if (i == 3) {
-			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "	     Battleship: " << battleship.status << endl;
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "	     Battleship: " << battleship.getShipStatus() << endl;
 		}
 		else if (i == 4) {
-			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << " 	      Destroyer: " << destroyer.status << endl;
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << " 	      Destroyer: " << destroyer.getShipStatus() << endl;
 		}
 		else if (i == 5) {
-			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "	      Submarine: " << submarine.status << endl;
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "	      Submarine: " << submarine.getShipStatus() << endl;
 		}
 		else if (i == 6) {
-			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "             Scout Ship: " << scout.status << endl;
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "             Scout Ship: " << scout.getShipStatus() << endl;
 		}
 		else if (i != 9) {
 			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << endl;
@@ -340,6 +355,8 @@ string getPlayerGuess() {
 		playerGuess += container[2];
 	}
 
+	cout << "Player Guess: " << playerGuess << endl;
+
 	return playerGuess;
 }
 
@@ -347,14 +364,13 @@ int main()
 {
 	string userInput;
 	bool isRunning = true;
-	vector<Ship> ships;
 
 	srand(time(NULL));
 
 	while (isRunning) {
 		clearScreen();
 
-		cout << "Welcome to Battleship!\nPlease ensure that your console window is large enough to see the entire game." << endl;
+		cout << "Welcome to Battleship!\nPlaying in full screen is reccomended." << endl;
 
 		int playerScore = 0, turnsLeft = 50, difficulty;
 
@@ -367,6 +383,8 @@ int main()
 		}
 
 #pragma region Generate Ships
+		vector<Ship> ships;
+
 		Ship aircraftCarrier(7);
 		bool validShipPos = false;
 		while (!validShipPos) {
@@ -458,11 +476,18 @@ int main()
 			vector<int> playerCoordinates;
 			bool isShipHit = false;
 
-			for (auto ship = ships.begin(); ship != ships.end(); ++ship) {
-				if (ship->status == "Destroyed") {
-					ships.erase(ship);
-				}
-			}
+			//vector<Ship> destroyedShips;
+			//for (auto ship = ships.begin(); ship != ships.end(); ++ship) {
+			//	if (ship->getShipStatus() == "Destroyed") {
+			//		destroyedShips.push_back(ship);
+			//	}
+			//}
+
+			//for (int i = 0; i < destroyedShips.size(); i++) {
+			//	//spaces[erasedIndex].erase();
+			//	//ships.erase(ships.begin() + indices[i]);
+			//	ships[destroyedShips[i]].erase();
+			//}
 
 			clearScreen();
 
@@ -507,6 +532,11 @@ int main()
 				gameOver = true;
 				clearScreen();
 				cout << "Game Over!" << endl;
+			}
+			else if (ships.size() == 0) {
+				gameOver = true;
+				clearScreen();
+				cout << "Victory!" << endl;
 			}
 		}
 
