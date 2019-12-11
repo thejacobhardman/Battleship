@@ -28,12 +28,12 @@ char board[10][10] = {
 
 class Ship {
 	int generateShipX() {
-		int x = rand() % 9 + 0;
+		int x = rand() % 10;
 		return x;
 	}
 
 	int generateShipY() {
-		int y = rand() % 9 + 0;
+		int y = rand() % 10;
 		return y;
 	}
 
@@ -97,7 +97,7 @@ public:
 		while (!validShipPos) {
 			bool verificationPassed = true;
 			if (isShipHorizontal) {
-				if (xCoordinate <= length) {
+				if (xCoordinate <= 10 - length) {
 					for (int i = 0; i < length; i++) {
 						if (board[yCoordinate][xCoordinate + i] != ' ') {
 							return false;
@@ -114,24 +114,22 @@ public:
 				}
 				else {
 					for (int i = 0; i < length; i++) {
+						if (board[yCoordinate][xCoordinate - i] != ' ') {
+							return false;
+						}
+					}
+					if (verificationPassed == true) {
 						for (int i = 0; i < length; i++) {
-							if (board[yCoordinate][xCoordinate - i] != ' ') {
-								return false;
-							}
+							board[yCoordinate][xCoordinate - i] = 'S';
+							string space = to_string(yCoordinate) + to_string(xCoordinate + i);
+							spaces.push_back(space);
 						}
-						if (verificationPassed == true) {
-							for (int i = 0; i < length; i++) {
-								board[yCoordinate][xCoordinate - i] = 'S';
-								string space = to_string(yCoordinate) + to_string(xCoordinate - i);
-								spaces.push_back(space);
-							}
-							return true;
-						}
+						return true;
 					}
 				}
 			}
 			else {
-				if (yCoordinate <= length) {
+				if (yCoordinate <= 10 - length) {
 					for (int i = 0; i < length; i++) {
 						if (board[yCoordinate + i][xCoordinate] != ' ') {
 							return false;
@@ -148,19 +146,17 @@ public:
 				}
 				else {
 					for (int i = 0; i < length; i++) {
+						if (board[yCoordinate - i][xCoordinate] != ' ') {
+							return false;
+						}
+					}
+					if (verificationPassed == true) {
 						for (int i = 0; i < length; i++) {
-							if (board[yCoordinate - i][xCoordinate] != ' ') {
-								return false;
-							}
+							board[yCoordinate - i][xCoordinate] = 'S';
+							string space = to_string(yCoordinate + i) + to_string(xCoordinate);
+							spaces.push_back(space);
 						}
-						if (verificationPassed == true) {
-							for (int i = 0; i < length; i++) {
-								board[yCoordinate - i][xCoordinate] = 'S';
-								string space = to_string(yCoordinate - i) + to_string(xCoordinate);
-								spaces.push_back(space);
-							}
-							return true;
-						}
+						return true;
 					}
 				}
 			}
@@ -343,8 +339,6 @@ string getPlayerGuess() {
 	if (guessedTen) {
 		playerGuess += container[2];
 	}
-
-	cout << playerGuess << endl;
 
 	return playerGuess;
 }
