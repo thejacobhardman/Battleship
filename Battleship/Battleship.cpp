@@ -63,6 +63,30 @@ public:
 
 	bool isShipHorizontal = generateShipOrientation();
 
+	//debug method
+	void printSpaces() {
+		cout << "Ship Spaces: " << endl;
+		for (int i = 0; i < spaces.size(); i++) {
+			cout << spaces[i] << endl;
+		}
+	}
+
+	bool checkIfHit(vector<int> playerCoordinates) {
+		bool isShipHit = false;
+		string userInput;
+
+		string playerGuess = to_string(playerCoordinates[0] - 1) + to_string(playerCoordinates[1] - 1);
+		
+		for (int i = 0; i < spaces.size(); i++) {
+			if (playerGuess == spaces[i]) {
+				isShipHit = true;
+				break;
+			}
+		}
+
+		return isShipHit;
+	}
+
 	Ship generateNewValues() {
 		Ship newShip(length);
 		return newShip;
@@ -438,6 +462,7 @@ int main()
 		while (!gameOver) {
 			string playerGuess;
 			vector<int> playerCoordinates;
+			bool isShipHit = false;
 
 			for (auto ship = ships.begin(); ship != ships.end(); ++ship) {
 				if (ship->status == "Destroyed") {
@@ -466,7 +491,21 @@ int main()
 				playerCoordinates[1] = 10;
 			} 
 
-			board[playerCoordinates[0] - 1][playerCoordinates[1] - 1] = 'X';
+			for (auto ship = ships.begin(); ship != ships.end(); ++ship) {
+				isShipHit = ship->checkIfHit(playerCoordinates);
+				if (isShipHit) {
+					cout << "Hit!" << endl;
+					board[playerCoordinates[0] - 1][playerCoordinates[1] - 1] = 'X';
+					break;
+				} 
+			}
+
+			if (!isShipHit) {
+				cout << "Miss!" << endl;
+				board[playerCoordinates[0] - 1][playerCoordinates[1] - 1] = 'O';
+			}
+
+			cin >> userInput;
 
 			turnsLeft -= 1;
 
