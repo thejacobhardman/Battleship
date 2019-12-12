@@ -114,7 +114,8 @@ public:
 				if (xCoordinate <= 10 - length) {
 					for (int i = 0; i < length; i++) {
 						if (board[yCoordinate][xCoordinate + i] != ' ') {
-							return false;
+							verificationPassed = false;
+							return verificationPassed;
 						}
 					}
 					if (verificationPassed == true) {
@@ -123,13 +124,14 @@ public:
 							string space = to_string(yCoordinate) + to_string((xCoordinate + i));
 							spaces.push_back(space);
 						}
-						return true;
+						return verificationPassed;
 					}
 				}
-				else {
+				else if (xCoordinate >= length) {
 					for (int i = 0; i < length; i++) {
 						if (board[yCoordinate][xCoordinate - i] != ' ') {
-							return false;
+							verificationPassed = false;
+							return verificationPassed;
 						}
 					}
 					if (verificationPassed == true) {
@@ -138,15 +140,20 @@ public:
 							string space = to_string(yCoordinate) + to_string((xCoordinate - i));
 							spaces.push_back(space);
 						}
-						return true;
+						return verificationPassed;
 					}
+				}
+				else {
+					verificationPassed = false;
+					return verificationPassed;
 				}
 			}
 			else {
 				if (yCoordinate <= 10 - length) {
 					for (int i = 0; i < length; i++) {
 						if (board[yCoordinate + i][xCoordinate] != ' ') {
-							return false;
+							verificationPassed = false;
+							return verificationPassed;
 						}
 					}
 					if (verificationPassed == true) {
@@ -158,7 +165,7 @@ public:
 						return true;
 					}
 				}
-				else {
+				else if (yCoordinate >= length) {
 					for (int i = 0; i < length; i++) {
 						if (board[yCoordinate - i][xCoordinate] != ' ') {
 							return false;
@@ -170,8 +177,12 @@ public:
 							string space = to_string((yCoordinate - i)) + to_string(xCoordinate);
 							spaces.push_back(space);
 						}
-						return true;
+						return verificationPassed;
 					}
+				}
+				else {
+					verificationPassed = false;
+					return verificationPassed;
 				}
 			}
 		}
