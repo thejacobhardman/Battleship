@@ -76,7 +76,7 @@ public:
 
 		string playerGuess = to_string(playerCoordinates[0] - 1) + to_string(playerCoordinates[1] - 1);
 		
-		for (int i = 0; i < spaces.size(); ++i) {
+		for (int i = 0; i < spaces.size(); i++) {
 			if (playerGuess == spaces[i]) {
 				isShipHit = true;
 				erasedIndex = i;
@@ -86,6 +86,7 @@ public:
 
 		if (isShipHit) {
 			spaces[erasedIndex].erase();
+			spaces.resize(spaces.size() - 1);
 		}
 
 		printSpaces();
@@ -98,6 +99,10 @@ public:
 	Ship generateNewValues() {
 		Ship newShip(length);
 		return newShip;
+	}
+
+	Ship copyValues(Ship ship) {
+		return ship;
 	}
 
 	bool placeShip() {
@@ -172,14 +177,18 @@ public:
 	}
 
 	string getShipStatus() {
-		bool isShipDestroyed = true;
+		bool isShipDestroyed = false;
 
-		for (int i = 0; i < spaces.size(); i++) {
+		if (spaces.size() == 0) {
+			isShipDestroyed = true;
+		}
+
+		/*for (int i = 0; i < spaces.size(); i++) {
 			if (spaces[i] != "") {
 				isShipDestroyed = false;
 				break;
 			}
-		}
+		}*/
 
 		if (isShipDestroyed) {
 			return "Destroyed";
@@ -510,13 +519,18 @@ int main()
 				playerCoordinates[1] = 10;
 			} 
 
+			int index = 0;
 			for (auto ship = ships.begin(); ship != ships.end(); ++ship) {
 				isShipHit = ship->checkIfHit(playerCoordinates);
+				cout << ship->getShipStatus() << endl;
 				if (isShipHit) {
 					cout << "Hit!" << endl;
 					board[playerCoordinates[0] - 1][playerCoordinates[1] - 1] = 'X';
+					//Ship copiedShip = ship;
+					//ships[index].copyValues(copiedShip);
 					break;
 				} 
+				index++;
 			}
 
 			if (!isShipHit) {
