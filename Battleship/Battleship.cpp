@@ -222,7 +222,10 @@ void clearScreen(char fill = ' ') {
 }
 
 void printWelcome() {
-	cout << "Welcome to Battleship!\nPlaying in full screen is reccomended." << endl;
+	cout << "Welcome to Battleship!\n\nPlaying in full screen is reccomended." << endl;
+	cout << "Ships are not placed diagonally." << endl;
+	cout << "To fire at a space on the map enter the space's coordinates like this: C7" << endl;
+	cout << "Make sure that your guess starts with a capitalized letter between A-J and a number between 1-10;" << endl;
 }
 
 void printBoard(char board[10][10], Ship aircraftCarrier, Ship battleship, Ship destroyer, Ship submarine, Ship scout) {
@@ -397,6 +400,7 @@ int main()
 {
 	string userInput;
 	bool isRunning = true;
+	int highScore = 0;
 
 	srand(time(NULL));
 
@@ -474,9 +478,9 @@ int main()
 		validInput = false;
 		while (!validInput) {
 			cout << "\nPlease select a difficulty: " << endl;
-			cout << "(1) Easy: A walk in the park." << endl;
-			cout << "(2) Medium: A decent challenge." << endl;
-			cout << "(3) Hard: Nearly impossible." << endl;
+			cout << "(1) Easy: A walk in the park. (Score x1)" << endl;
+			cout << "(2) Medium: A decent challenge. (Score x2)" << endl;
+			cout << "(3) Hard: Nearly impossible. (Score x3)" << endl;
 			cout << "Enter the corresponding number to select your difficulty: ";
 			cin >> userInput;
 			validInput = true;
@@ -562,20 +566,24 @@ int main()
 					board[playerCoordinates[0] - 1][playerCoordinates[1] - 1] = 'O';
 				}
 
-				cin >> userInput;
+				//DEBUG
+				//cout << "Debug Mode Active" << endl;
+				//cin >> userInput;
 
 				turnsLeft -= 1;
 			}
 
 			if (turnsLeft == 0) {
 				gameOver = true;
+				if (playerScore >= highScore) { highScore = playerScore; }
 				clearScreen();
-				cout << "Game Over!" << endl << "Final Score: " << playerScore << endl << "Hits: " << hits << endl << "Misses: " << misses << endl;;
+				cout << "Game Over!" << endl << "Final Score: " << playerScore << endl << "High Score: " << highScore << "Hits: " << hits << endl << "Misses: " << misses << endl;;
 			}
 			else if (destroyedShips.size() == 5) {
 				gameOver = true;
+				if (playerScore >= highScore) { highScore = playerScore; }
 				clearScreen();
-				cout << "Victory!" << endl << "Final Score: " << playerScore << endl << "Hits: " << hits << endl << "Misses: " << misses << endl;
+				cout << "Victory!" << endl << "Final Score: " << playerScore << endl << "High Score: " << highScore << "Hits: " << hits << endl << "Misses: " << misses << endl;
 			}
 		}
 
