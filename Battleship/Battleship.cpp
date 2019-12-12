@@ -58,6 +58,8 @@ public:
 
 	vector<string> spaces;
 
+	string status = getShipStatus(spaces);
+
 	bool isShipHorizontal = generateShipOrientation();
 
 	//debug method
@@ -188,18 +190,24 @@ public:
 		}
 	}
 
-	string getShipStatus() {
+	string getShipStatus(vector<string> spaces) {
 		bool isShipDestroyed = false;
+		string status;
+
+		cout << "spaces.size(): " << spaces.size() << endl;
+		cin >> status;
 
 		if (spaces.size() == 0) {
 			isShipDestroyed = true;
 		}
 
 		if (isShipDestroyed) {
-			return "Destroyed";
+			status = "Destroyed";
+			return status;
 		}
 		else {
-			return "Active";
+			status = "Active";
+			return status;
 		}
 	}
 };
@@ -228,7 +236,7 @@ void printWelcome() {
 	cout << "Make sure that your guess starts with a capitalized letter between A-J and a number between 1-10;" << endl;
 }
 
-void printBoard(char board[10][10], Ship aircraftCarrier, Ship battleship, Ship destroyer, Ship submarine, Ship scout) {
+void printBoard(Ship aircraftCarrier, Ship battleship, Ship destroyer, Ship submarine, Ship scout) {
 	char letterArr[10] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
 
 	cout << "-----------------------------------------" << endl;
@@ -246,19 +254,19 @@ void printBoard(char board[10][10], Ship aircraftCarrier, Ship battleship, Ship 
 			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "		Ship Statuses:" << endl;
 		}
 		else if (i == 2) {
-			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "	   Aircraft Carrier: " << aircraftCarrier.getShipStatus() << endl;
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "	   Aircraft Carrier: " << aircraftCarrier.getShipStatus(aircraftCarrier.spaces) << endl;
 		}
 		else if (i == 3) {
-			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "	     Battleship: " << battleship.getShipStatus() << endl;
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "	     Battleship: " << battleship.getShipStatus(battleship.spaces) << endl;
 		}
 		else if (i == 4) {
-			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << " 	      Destroyer: " << destroyer.getShipStatus() << endl;
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << " 	      Destroyer: " << destroyer.getShipStatus(destroyer.spaces) << endl;
 		}
 		else if (i == 5) {
-			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "	      Submarine: " << submarine.getShipStatus() << endl;
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "	      Submarine: " << submarine.getShipStatus(submarine.spaces) << endl;
 		}
 		else if (i == 6) {
-			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "             Scout Ship: " << scout.getShipStatus() << endl;
+			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << "             Scout Ship: " << scout.getShipStatus(scout.spaces) << endl;
 		}
 		else if (i != 9) {
 			cout << endl << "|---+---+---+---+---+---+---+---+---+---|" << endl;
@@ -520,15 +528,15 @@ int main()
 
 			vector<string> destroyedShips;
 			for (auto ship = ships.begin(); ship != ships.end(); ++ship) {
-				if (ship->getShipStatus() == "Destroyed") {
-					destroyedShips.push_back(ship->getShipStatus());
+				if (ship->getShipStatus(ship->spaces) == "Destroyed") {
+					destroyedShips.push_back(ship->status);
 				}
 			}
 
 			clearScreen();
 
 			if (!gameOver) {
-				printBoard(board, aircraftCarrier, battleship, destroyer, submarine, scout);
+				printBoard(aircraftCarrier, battleship, destroyer, submarine, scout);
 
 				cout << endl << "     Score: " << playerScore << "    Turns Remaining: " << turnsLeft;
 				cout << endl << "          Hits: " << hits << "    Misses: " << misses << endl;
@@ -565,10 +573,10 @@ int main()
 					misses += 1;
 					board[playerCoordinates[0] - 1][playerCoordinates[1] - 1] = 'O';
 				}
-
-				//DEBUG
-				//cout << "Debug Mode Active" << endl;
-				//cin >> userInput;
+				
+				cout << "Press 'enter' to continue." << endl;
+				cin.ignore();
+				cin.get();
 
 				turnsLeft -= 1;
 			}
@@ -577,7 +585,7 @@ int main()
 				gameOver = true;
 				if (playerScore >= highScore) { highScore = playerScore; }
 				clearScreen();
-				cout << "Game Over!" << endl << "Final Score: " << playerScore << endl << "High Score: " << highScore << "Hits: " << hits << endl << "Misses: " << misses << endl;;
+				cout << "Defeat!" << endl << "Final Score: " << playerScore << endl << "High Score: " << highScore << "Hits: " << hits << endl << "Misses: " << misses << endl;;
 			}
 			else if (destroyedShips.size() == 5) {
 				gameOver = true;
