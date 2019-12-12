@@ -72,20 +72,25 @@ public:
 	bool checkIfHit(vector<int> playerCoordinates) {
 		bool isShipHit = false;
 		string userInput;
-		int erasedIndex = 0;
 
 		string playerGuess = to_string(playerCoordinates[0] - 1) + to_string(playerCoordinates[1] - 1);
-		
+
+		int index = 0;
 		for (int i = 0; i < spaces.size(); i++) {
 			if (playerGuess == spaces[i]) {
 				isShipHit = true;
-				erasedIndex = i;
+				spaces[i].erase();
+				index = i;
 				break;
 			}
 		}
 
 		if (isShipHit) {
-			spaces[erasedIndex].erase();
+			for (int i = index; i < spaces.size(); i++) {
+				if (i != spaces.size() - 1) {
+					spaces[i] = spaces[i + 1];
+				}
+			}
 			spaces.resize(spaces.size() - 1);
 		}
 
@@ -99,10 +104,6 @@ public:
 	Ship generateNewValues() {
 		Ship newShip(length);
 		return newShip;
-	}
-
-	Ship copyValues(Ship ship) {
-		return ship;
 	}
 
 	bool placeShip() {
@@ -183,13 +184,6 @@ public:
 			isShipDestroyed = true;
 		}
 
-		/*for (int i = 0; i < spaces.size(); i++) {
-			if (spaces[i] != "") {
-				isShipDestroyed = false;
-				break;
-			}
-		}*/
-
 		if (isShipDestroyed) {
 			return "Destroyed";
 		}
@@ -214,6 +208,10 @@ void clearScreen(char fill = ' ') {
 	FillConsoleOutputCharacter(console, fill, cells, tl, &written);
 	FillConsoleOutputAttribute(console, s.wAttributes, cells, tl, &written);
 	SetConsoleCursorPosition(console, tl);
+}
+
+void printWelcome() {
+	cout << "Welcome to Battleship!\nPlaying in full screen is reccomended." << endl;
 }
 
 void printBoard(char board[10][10], Ship aircraftCarrier, Ship battleship, Ship destroyer, Ship submarine, Ship scout) {
@@ -255,7 +253,7 @@ void printBoard(char board[10][10], Ship aircraftCarrier, Ship battleship, Ship 
 	cout << endl << "-----------------------------------------" << endl << "  1   2   3   4   5   6   7   8   9  10" << endl;
 }
 
-string getPlayerGuess() {
+string getPlayerGuess(vector<string> alreadyGuessedCoordinates) {
 	bool validInput = false, validSize = false, guessedTen = false;
 	vector<char> container;
 	const char COLUMNS[10] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
@@ -322,46 +320,60 @@ string getPlayerGuess() {
 				validInput = false;
 			}
 		}
-	}
 
-	// Convert the user's input to coordinates
-	switch (container[0]) {
-	case 'A':
-		container[0] = '1';
-		break;
-	case 'B':
-		container[0] = '2';
-		break;
-	case 'C':
-		container[0] = '3';
-		break;
-	case 'D':
-		container[0] = '4';
-		break;
-	case 'E':
-		container[0] = '5';
-		break;
-	case 'F':
-		container[0] = '6';
-		break;
-	case 'G':
-		container[0] = '7';
-		break;
-	case 'H':
-		container[0] = '8';
-		break;
-	case 'I':
-		container[0] = '9';
-		break;
-	case 'J':
-		container[0] = '0';
-		break;
-	}
+		if (validInput) {
+			// Convert the user's input to coordinates
+			switch (container[0]) {
+			case 'A':
+				container[0] = '1';
+				break;
+			case 'B':
+				container[0] = '2';
+				break;
+			case 'C':
+				container[0] = '3';
+				break;
+			case 'D':
+				container[0] = '4';
+				break;
+			case 'E':
+				container[0] = '5';
+				break;
+			case 'F':
+				container[0] = '6';
+				break;
+			case 'G':
+				container[0] = '7';
+				break;
+			case 'H':
+				container[0] = '8';
+				break;
+			case 'I':
+				container[0] = '9';
+				break;
+			case 'J':
+				container[0] = '0';
+				break;
+			}
 
-	playerGuess += container[0];
-	playerGuess += container[1];
-	if (guessedTen) {
-		playerGuess += container[2];
+			playerGuess += container[0];
+			playerGuess += container[1];
+			if (guessedTen) {
+				playerGuess += container[2];
+			}
+		}
+
+		//Check to make sure that the user hasn't guessed this space before
+		if (validInput) {
+			for (int i = 0; i < alreadyGuessedCoordinates.size(); i++) {
+				if (playerGuess == alreadyGuessedCoordinates[i]) {
+					playerGuess.clear();
+					validInput = false;
+					cout << "You cannot guess the same space twice." << endl;
+					break;
+				}
+			}
+		}
 	}
 
 	cout << "Player Guess: " << playerGuess << endl;
@@ -379,9 +391,11 @@ int main()
 	while (isRunning) {
 		clearScreen();
 
-		cout << "Welcome to Battleship!\nPlaying in full screen is reccomended." << endl;
+		printWelcome();
 
-		int playerScore = 0, turnsLeft = 50, difficulty;
+		int playerScore = 0, turnsLeft = 50, difficulty, scoreMultiplier = 1;
+
+		vector<string> alreadyGuessedCoordinates;
 
 		bool userConfirm = false, gameOver = false, validInput = false, gameWon = false;
 
@@ -471,12 +485,15 @@ int main()
 		switch (difficulty) {
 		case 1:
 			turnsLeft = 100;
+			scoreMultiplier = 1;
 			break;
 		case 2:
 			turnsLeft = 50;
+			scoreMultiplier = 2;
 			break;
 		case 3:
 			turnsLeft = 25;
+			scoreMultiplier = 3;
 			break;
 		}
 
@@ -485,62 +502,61 @@ int main()
 			vector<int> playerCoordinates;
 			bool isShipHit = false;
 
-			//vector<Ship> destroyedShips;
-			//for (auto ship = ships.begin(); ship != ships.end(); ++ship) {
-			//	if (ship->getShipStatus() == "Destroyed") {
-			//		destroyedShips.push_back(ship);
-			//	}
-			//}
+			vector<string> destroyedShips;
+			for (auto ship = ships.begin(); ship != ships.end(); ++ship) {
+				if (ship->getShipStatus() == "Destroyed") {
+					destroyedShips.push_back(ship->getShipStatus());
+				}
+			}
 
-			//for (int i = 0; i < destroyedShips.size(); i++) {
-			//	//spaces[erasedIndex].erase();
-			//	//ships.erase(ships.begin() + indices[i]);
-			//	ships[destroyedShips[i]].erase();
-			//}
+			if (destroyedShips.size() == 5) {
+				gameOver = true;
+			}
 
 			clearScreen();
 
-			printBoard(board, aircraftCarrier, battleship, destroyer, submarine, scout);
+			if (!gameOver) {
+				printBoard(board, aircraftCarrier, battleship, destroyer, submarine, scout);
 
-			cout << endl << "     Score: " << playerScore << "    Turns Remaining: " << turnsLeft << endl;
+				cout << endl << "     Score: " << playerScore << "    Turns Remaining: " << turnsLeft << endl;
+				cout << "Destroyed Ships: " << destroyedShips.size() << endl;
 
-			playerGuess = getPlayerGuess();
+				playerGuess = getPlayerGuess(alreadyGuessedCoordinates);
+				alreadyGuessedCoordinates.push_back(playerGuess);
 
-			for (int i = 0; i < playerGuess.size(); i++) {
-				int num = int(playerGuess[i] - '0');
-				playerCoordinates.push_back(num);
+				for (int i = 0; i < playerGuess.size(); i++) {
+					int num = int(playerGuess[i] - '0');
+					playerCoordinates.push_back(num);
+				}
+
+				if (playerCoordinates[0] == 0) {
+					playerCoordinates[0] = 10;
+				}
+
+				if (playerCoordinates.size() == 3) {
+					playerCoordinates[1] = 10;
+				}
+
+				for (auto ship = ships.begin(); ship != ships.end(); ++ship) {
+					isShipHit = ship->checkIfHit(playerCoordinates);
+					cout << ship->getShipStatus() << endl;
+					if (isShipHit) {
+						cout << "Hit!" << endl;
+						board[playerCoordinates[0] - 1][playerCoordinates[1] - 1] = 'X';
+						playerScore += (5 * scoreMultiplier);
+						break;
+					}
+				}
+
+				if (!isShipHit) {
+					cout << "Miss!" << endl;
+					board[playerCoordinates[0] - 1][playerCoordinates[1] - 1] = 'O';
+				}
+
+				cin >> userInput;
+
+				turnsLeft -= 1;
 			}
-
-			if (playerCoordinates[0] == 0) {
-				playerCoordinates[0] = 10;
-			}
-
-			if (playerCoordinates.size() == 3) {
-				playerCoordinates[1] = 10;
-			} 
-
-			int index = 0;
-			for (auto ship = ships.begin(); ship != ships.end(); ++ship) {
-				isShipHit = ship->checkIfHit(playerCoordinates);
-				cout << ship->getShipStatus() << endl;
-				if (isShipHit) {
-					cout << "Hit!" << endl;
-					board[playerCoordinates[0] - 1][playerCoordinates[1] - 1] = 'X';
-					//Ship copiedShip = ship;
-					//ships[index].copyValues(copiedShip);
-					break;
-				} 
-				index++;
-			}
-
-			if (!isShipHit) {
-				cout << "Miss!" << endl;
-				board[playerCoordinates[0] - 1][playerCoordinates[1] - 1] = 'O';
-			}
-
-			cin >> userInput;
-
-			turnsLeft -= 1;
 
 			if (turnsLeft == 0) {
 				gameOver = true;
