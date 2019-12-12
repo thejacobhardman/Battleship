@@ -9,7 +9,6 @@
 #include <windows.h>
 #include <string>
 #include <vector>
-#include <algorithm>
 
 using namespace std;
 
@@ -94,9 +93,10 @@ public:
 			spaces.resize(spaces.size() - 1);
 		}
 
-		printSpaces();
+		//DEBUG
+		/*printSpaces();
 		cout << "spaces.size(): " << spaces.size() << endl;
-		cin >> userInput;
+		cin >> userInput;*/
 
 		return isShipHit;
 	}
@@ -387,7 +387,8 @@ string getPlayerGuess(vector<string> alreadyGuessedCoordinates) {
 		}
 	}
 
-	cout << "Player Guess: " << playerGuess << endl;
+	//DEBUG
+	//cout << "Player Guess: " << playerGuess << endl;
 
 	return playerGuess;
 }
@@ -404,7 +405,7 @@ int main()
 
 		printWelcome();
 
-		int playerScore = 0, turnsLeft = 50, difficulty, scoreMultiplier = 1;
+		int playerScore = 0, turnsLeft = 50, difficulty, scoreMultiplier = 1, hits = 0, misses = 0;
 
 		vector<string> alreadyGuessedCoordinates;
 
@@ -520,17 +521,13 @@ int main()
 				}
 			}
 
-			if (destroyedShips.size() == 5) {
-				gameOver = true;
-			}
-
 			clearScreen();
 
 			if (!gameOver) {
 				printBoard(board, aircraftCarrier, battleship, destroyer, submarine, scout);
 
-				cout << endl << "     Score: " << playerScore << "    Turns Remaining: " << turnsLeft << endl;
-				cout << "Destroyed Ships: " << destroyedShips.size() << endl;
+				cout << endl << "     Score: " << playerScore << "    Turns Remaining: " << turnsLeft;
+				cout << endl << "          Hits: " << hits << "    Misses: " << misses << endl;
 
 				playerGuess = getPlayerGuess(alreadyGuessedCoordinates);
 				alreadyGuessedCoordinates.push_back(playerGuess);
@@ -550,17 +547,18 @@ int main()
 
 				for (auto ship = ships.begin(); ship != ships.end(); ++ship) {
 					isShipHit = ship->checkIfHit(playerCoordinates);
-					cout << ship->getShipStatus() << endl;
 					if (isShipHit) {
 						cout << "Hit!" << endl;
 						board[playerCoordinates[0] - 1][playerCoordinates[1] - 1] = 'X';
 						playerScore += (5 * scoreMultiplier);
+						hits += 1;
 						break;
 					}
 				}
 
 				if (!isShipHit) {
 					cout << "Miss!" << endl;
+					misses += 1;
 					board[playerCoordinates[0] - 1][playerCoordinates[1] - 1] = 'O';
 				}
 
@@ -572,12 +570,12 @@ int main()
 			if (turnsLeft == 0) {
 				gameOver = true;
 				clearScreen();
-				cout << "Game Over!" << endl;
+				cout << "Game Over!" << endl << "Final Score: " << playerScore << endl << "Hits: " << hits << endl << "Misses: " << misses << endl;;
 			}
-			else if (ships.size() == 0) {
+			else if (destroyedShips.size() == 5) {
 				gameOver = true;
 				clearScreen();
-				cout << "Victory!" << endl;
+				cout << "Victory!" << endl << "Final Score: " << playerScore << endl << "Hits: " << hits << endl << "Misses: " << misses << endl;
 			}
 		}
 
