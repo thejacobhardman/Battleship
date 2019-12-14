@@ -127,7 +127,7 @@ public:
 					}
 					if (verificationPassed == true) {
 						for (int i = 0; i < length; i++) {
-							board[yCoordinate][xCoordinate + i] = 'S';
+							//board[yCoordinate][xCoordinate + i] = 'S';
 							string space = to_string(yCoordinate) + to_string((xCoordinate + i));
 							spaces.push_back(space);
 						}
@@ -143,7 +143,7 @@ public:
 					}
 					if (verificationPassed == true) {
 						for (int i = 0; i < length; i++) {
-							board[yCoordinate][xCoordinate - i] = 'S';
+							//board[yCoordinate][xCoordinate - i] = 'S';
 							string space = to_string(yCoordinate) + to_string((xCoordinate - i));
 							spaces.push_back(space);
 						}
@@ -165,7 +165,7 @@ public:
 					}
 					if (verificationPassed == true) {
 						for (int i = 0; i < length; i++) {
-							board[yCoordinate + i][xCoordinate] = 'S';
+							//board[yCoordinate + i][xCoordinate] = 'S';
 							string space = to_string((yCoordinate + i)) + to_string(xCoordinate);
 							spaces.push_back(space);
 						}
@@ -180,7 +180,7 @@ public:
 					}
 					if (verificationPassed == true) {
 						for (int i = 0; i < length; i++) {
-							board[yCoordinate - i][xCoordinate] = 'S';
+							//board[yCoordinate - i][xCoordinate] = 'S';
 							string space = to_string((yCoordinate - i)) + to_string(xCoordinate);
 							spaces.push_back(space);
 						}
