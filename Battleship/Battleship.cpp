@@ -46,7 +46,12 @@ class Ship {
 		case 2:
 			return false;
 			break;
+		default:
+			return true;
+			break;
 		}
+
+		return true;
 	}
 
 public:
@@ -194,8 +199,8 @@ public:
 		bool isShipDestroyed = false;
 		string status;
 
-		cout << "spaces.size(): " << spaces.size() << endl;
-		cin >> status;
+		//cout << "spaces.size(): " << spaces.size() << endl;
+		//cin >> status;
 
 		if (spaces.size() == 0) {
 			isShipDestroyed = true;
